@@ -12,26 +12,33 @@ class Controller extends BaseController
 
     public function index()
     {
-        
-    }
 
+    }
+    public function inventory()
+    {
+
+    }
+    public function machine()
+    {
+
+    }
     public function mine()
     {
-        
+
     }
 
     public function collect()
     {
-        
+
     }
 
     public function build()
     {
-        
+
     }
 
     public function craft()
     {
-        
+
     }
 }
