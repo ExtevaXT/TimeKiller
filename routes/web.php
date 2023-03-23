@@ -1,6 +1,7 @@
 <?php
 
-use App\Resource;
+use App\Resource\MineralItem;
+use App\Resource\Resource;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,5 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    dd(Resource::elements());
+    Resource::make();
+    Resource::load()->whereInstanceOf(MineralItem::class)->take(10);
 });
