@@ -2,10 +2,13 @@
 
 namespace App\Resource;
 
-use App\Resource\Items\ElementItem;
-use App\Resource\Items\MineralItem;
+use App\Resource\Items\Component;
+use App\Resource\Items\Element;
+use App\Resource\Items\Generator;
+use App\Resource\Items\Instance;
+use App\Resource\Items\Mineral;
+use App\Resource\Items\Processor;
 use Illuminate\Support\Str;
-use function PHPUnit\Framework\lessThanOrEqual;
 
 // Mine array
 // □□□□□□□□□□
@@ -26,43 +29,53 @@ $example = [
 // plot acts same but there is also slot id
 class Resource
 {
-    public static array $ore = ['', 'Crushed', 'Purified Crushed', 'Centrifuged'];
-    public static array $processed = ['', 'Small', 'Tiny'];
-    public static array $formed = ['Plate', 'Dense Plate', 'Wire', 'Item Casing', 'Gear', 'Ring', 'Rod'];
+    const TPS = 20;
+    const ORE = ['', 'Crushed', 'Purified Crushed', 'Centrifuged'];
+    const PROCESSED = ['', 'Small', 'Tiny'];
+    const FORMED = ['Plate', 'Dense Plate', 'Wire', 'Item Casing', 'Gear', 'Ring', 'Rod'];
 
     // Liquids: Water, Lava, Oil
     // EU - Energy Units
-    public static array $generator = [
-        'Generator', // (coal / wood) => EU/t
-        'Geothermal Generator', // lava => EU/t
-        'Nuclear Reactor', 'Reactor Chamber', // uranium pods => EU/t
-        'Radioisotope Thermoelectric Generator', // Pellets of RTG Fuel => EU/t
-        'Semifluid Generator', // Oil => EU/t
-        'Solar Panel', // Sun => EU/t
-        'Water Mill', // Water => EU/t
-        'Wind Mill', // Height, Weather => EU/t
+    // t - Tick, 1t - 1/20s
+    const GENERATORS = [
+        ['name' => 'Generator', 'voltage'=> -10, 'capacity'=>4000, 'fuel'=>'coal', 'fuelConsumption' => 1/8], // (coal / wood) => EU/t
+        ['name' => 'Geothermal Generator', 'voltage'=> -20, 'capacity'=>480000, 'fuel'=>Liquid::LAVA, 'fuelConsumption' => 2],
+        ['name' => 'Radioisotope Thermoelectric Generator', 'consumption'=> -8, 'capacity'=>0, 'fuel'=>'Pellets of RTG Fuel', 'fuelConsumption' => 0],
+        ['name' => 'Semifluid Generator', 'voltage'=> -8, 'capacity'=>128000, 'fuel'=>Liquid::OIL, 'fuelConsumption' => 2],
+        ['name' => 'Solar Panel', 'voltage'=> -1, 'capacity'=>4000, 'fuel'=>null, 'fuelConsumption' => 0],
+        ['name' => 'Water Mill', 'voltage'=> -2, 'capacity'=>4000, 'fuel'=>Liquid::WATER, 'fuelConsumption' => 2],
+        ['name' => 'Wind Mill', 'voltage'=> -4, 'capacity'=>4000, 'fuel'=>null, 'fuelConsumption' => 0],
+        //'Nuclear Reactor', 'Reactor Chamber', // uranium pods => EU/t
     ];
-    public static array $processor = [
-        'Compressor', // 9 plates + 625 EU => Dense Plate
-        'Electric Furnace', // (Ore / Dust) + 390 EU => Ingot
-        'Extractor', // Resin + 313 EU => 3 Rubber
-        'Induction Furnace', // (Ore / Dust) + 6000 to 208 EU => Ingot
-        'Furnace', // (Ore / Dust) + (coal / wood) => Ingot
-        'Macerator', // Ore + 625 EU => Crushed Ore
-        'Mass Fabricator','Pattern Storage', 'Replicator', 'Scanner',
-        'Metal Former', // Ingot + 625 EU => Plates, Item Casings and Wires
-        'Ore Washing Plant', // Water + Crushed Ore + 330 EU => Purified Crushed Ore
-        'Recycler', // Any item + 360 EU => 12.5% Scrap
-        'Solar Distiller', // Sun + Water => Distilled Water
-        'Thermal Centrifuge', // Crushed Ore + (1500 * (mass / multiplier) EU) => Dust + Stone Dust + 1 of elements Small / Tiny dust
-                            // Purified Crushed Ore + (1500 * (mass / multiplier) EU) => Dust + 2 of elements Small / Tiny dust
+    const PROCESSORS = [
+        ['name' => 'Compressor', 'consumption'=> 625, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// 9 plates + 625 EU => Dense Plate
+        ['name' => 'Electric Furnace', 'consumption'=> 390, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// (Ore / Dust) + 390 EU => Ingot
+        ['name' => 'Extractor', 'consumption'=> 313, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Resin + 313 EU => 3 Rubber
+        ['name' => 'Induction Furnace', 'consumption'=> 6000, 'voltage'=>128, 'capacity'=>48000, 'input'=>null, 'output' => null],// (Ore / Dust) + 6000 to 208 EU => Ingot
+        ['name' => 'Macerator', 'consumption'=> 625, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ore + 625 EU => Crushed Ore
+        ['name' => 'Metal Former', 'consumption'=> 625, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ingot + 625 EU => Plates, Item Casings and Wires
+        ['name' => 'Ore Washing Plant', 'consumption'=> 330, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Water + Crushed Ore + 330 EU => Purified Crushed Ore
+        ['name' => 'Recycler', 'consumption'=> 360, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Any item + 360 EU => 12.5% Scrap
+        ['name' => 'Solar Distiller', 'consumption'=> 0, 'voltage'=>0, 'capacity'=>0, 'input'=>null, 'output' => null],// Sun + Water => Distilled Water
+        ['name' => 'Thermal Centrifuge', 'consumption'=> 24000 , 'voltage'=>32, 'capacity'=>48000, 'input'=>null, 'output' => null],// Crushed Ore + (24000 * (mass / multiplier) EU) => Dust + Stone Dust + 1 of elements Small / Tiny dust
+        // Purified Crushed Ore + (1500 * (mass / multiplier) EU) => Dust + 2 of elements Small / Tiny dust
+
+
+
+        //'Furnace', // (Ore / Dust) + (coal / wood) => Ingot
+        //'Mass Fabricator','Pattern Storage', 'Replicator', 'Scanner',
+
     ];
-    public static array $gatherer = [
+    const GATHERERS = [
         'Miner','Advanced Miner', 'Pump', 'Advanced Pump'
     ];
-    public static array $storage = [
+    const STORAGES = [
         'Chest','Tank'
     ];
+    const ENERGY_STORAGES = [
+        'BatBox','CESU', 'MFE', 'MFSU'
+    ];
+
     public static function elements()
     {
         return collect(json_decode(file_get_contents(resource_path('data/PeriodicTable.json')))->elements);
@@ -71,13 +84,16 @@ class Resource
     {
         return collect(json_decode(file_get_contents(resource_path('data/Minerals.json'))));
     }
-
-    public static function make()
+    public static function find($id)
+    {
+        return Resource::load()->firstWhere('id', $id);
+    }
+    public static function make(bool $elementsFilled = false)
     {
         $items = collect();
-        // Fill up elements and their forms
+        // Fill up Elements
         foreach (self::elements() as $element){
-            $item = new ElementItem($element->name, $element->summary);
+            $item = new Element($element->name, $element->summary);
             $item->color = $element->{"cpk-hex"};
             $item->symbol = $element->symbol;
             $item->melt = $element->melt;
@@ -86,28 +102,54 @@ class Resource
             $item->radioactive = $element->atomic_mass > 207 or in_array($element->atomic_mass, [98, 145]);
             $item->metal = Str::contains($element->category, [' metal', 'lanthanide', 'actinide']);
             $items->push($item);
+            // Fill up Items made of this Element
             if($item->metal) {
-                foreach (self::$formed as $form){
-                    $item = new Item($element->name.' '.$form, 'Metal '.$form. ' made of '.$element->name);
-                    $items->push($item);
+                foreach (self::FORMED as $form){
+                    $component = new Component($element->name.' '.$form, 'Metal '.$form. ' made of '.$element->name);
+                    $component->material = $item;
+                    $items->push($component);
+                }
+                foreach (self::GENERATORS as $generator){
+                    $instance = new Generator($generator['name']);
+                    //$instance->sprite = 'generator.png';
+                    $instance->material = $item;
+                    $instance->capacity = $generator['capacity'];
+                    $instance->voltage = $generator['voltage'];
+                    $instance->fuel = $generator['fuel'];
+                    $instance->fuelConsumption = $generator['fuelConsumption'];
+                    $items->push($instance);
+                }
+                foreach (self::PROCESSORS as $processor){
+                    $instance = new Processor($processor['name']);
+                    //$instance->sprite = 'processor.png';
+                    $instance->material = $item;
+                    $instance->capacity = $processor['capacity'];
+                    $instance->consumption = $processor['consumption'];
+                    $instance->voltage = $processor['voltage'];
+                    $instance->input = $processor['input'];
+                    $instance->output = $processor['output'];
+                    $items->push($instance);
                 }
 
             }
-            foreach (self::$processed as $form){
-                $item = new Item($form.' '.$element->name.' Dust', $form. ' Dust consisting of '.$element->name);
-                $items->push($item);
+            foreach (self::PROCESSED as $form){
+                $component = new Component($form.' '.$element->name.' Dust', $form. ' Dust consisting of '.$element->name);
+                $component->material = $item;
+                $items->push($component);
             }
-        }
 
-        // Fill up minerals and their forms
+
+        }
+        // Fill up Minerals and their forms
         foreach (self::minerals() as $mineral) {
             if(!isset($mineral->formula)
                 or Str::contains($mineral->formula, 'g/mol')
                 or (float)Str::replace(['<sub>','</sub>'], '', $mineral->formula)
             ) continue;
-            $item = new MineralItem($mineral->name, $mineral->formula);
+            $item = new Mineral($mineral->name, $mineral->formula);
             $item->color = $mineral->color ?? null;
             $formula = $mineral->formula;
+            #region Formula to elements
             // Need to break this formula to elements with percentage
             // (Na,K,Ca)<sub>2</sub>Al<sub>2</sub>Si<sub>7</sub>O<sub>18</sub>·<sub>6</sub>(H<sub>2</sub>O)
             // ['Na' => 2, 'K' => 2, 'Ca' => 2, 'Al' => 2, 'Si' => 7, 'O' => 18, 'H' => 2*6, 'O' = 1*6]
@@ -163,20 +205,20 @@ class Resource
             $count = array_sum($elements);
             // Need to assign ElementItem instances
             $elementItems = collect();
-            foreach ($elements as $symbol => $value){
-                $elementItems->push(['element'=>ElementItem::find($symbol), 'percentage' => round(100 * $value / $count, 1)]);
-            }
+            if($elementsFilled)
+                foreach ($elements as $symbol => $value)
+                    $elementItems->push(['element'=>Element::find($symbol), 'percentage' => round(100 * $value / $count, 1)]);
             // Finally
+            #endregion
             $item->elements = $elements;
             $item->elementItems = $elementItems;
             $item->hardness = 1;
             $items->push($item);
-            foreach (self::$ore as $form){
+            foreach (self::ORE as $form){
                 $item = new Item($form.' '.$mineral->name.' Ore', $mineral->formula);
                 $items->push($item);
             }
         }
-
         $items->map(fn($item, $i) => $item->id = $i + 1);
         //file_put_contents(resource_path('data/items.json'), json_encode($items, JSON_PRETTY_PRINT));
         file_put_contents(resource_path('data/items'), serialize($items));

@@ -5,8 +5,9 @@ namespace App\Resource\Items;
 use App\Resource\Item;
 use App\Resource\Resource;
 
-class ElementItem extends Item
+class Element extends Item
 {
+
     public static function find($symbol)
     {
         return Resource::load()->firstWhere('symbol', $symbol);

@@ -4,8 +4,10 @@ namespace App\Resource\Items;
 
 use App\Resource\Item;
 
-class MachineItem extends Item
+class Instance extends Item
 {
     public string $type;
     public array $slots;
+    public string $sprite;
+    public Element $material;
 }

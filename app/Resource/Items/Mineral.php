@@ -4,7 +4,7 @@ namespace App\Resource\Items;
 
 use App\Resource\Item;
 
-class MineralItem extends Item
+class Mineral extends Item
 {
     public float $hardness;
     public mixed $color;

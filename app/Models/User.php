@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Resource\Items\Machine;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,13 +14,27 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public function energy()
+    public function Energy()
     {
+        $energy = 0;
         //$this->instances()
+        foreach ($this->instances as $instance){
+            if(($machine = $instance->item()) instanceof Machine){
+                 $energy += $machine->voltage; // * $instance->loaded
+            }
+        }
+        return $energy;
     }
-    public function energyRate()
+    public function EnergyVoltage()
     {
-
+        $energy = 0;
+        //$this->instances()
+        foreach ($this->instances as $instance){
+            if(($machine = $instance->item()) instanceof Machine){
+                $energy += $machine->voltage;
+            }
+        }
+        return $energy;
     }
     public function instances(): HasMany
     {

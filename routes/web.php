@@ -1,7 +1,7 @@
 <?php
 
-use App\Resource\Items\Items\Items\Items\MineralItem;
-use App\Resource\Items\Items\Items\Items\Resource;
+use App\Http\Controllers\Controller;
+use App\Resource\Resource;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    //Resource::make();
-    dd(Resource::load()->get(1129)) ;
+    dd(Resource::load()->get(1129));
 });
+Route::get('/make', function () {
+    Resource::make();
+    Resource::make(true);
+});
+Route::get('/mine', [Controller::class, 'mine']);
