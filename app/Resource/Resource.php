@@ -2,12 +2,67 @@
 
 namespace App\Resource;
 
+use App\Resource\Items\ElementItem;
+use App\Resource\Items\MineralItem;
 use Illuminate\Support\Str;
 use function PHPUnit\Framework\lessThanOrEqual;
 
+// Mine array
+// □□□□□□□□□□
+// ■■□□■□□□□□
+// □■■■■□□□□□
+// □□□□■□□□□□
+// ..........
 
+// 1 - stone, 5 - some mineral
+// generates down 255 times
+// at least one ore vein
+$example = [
+    [1,1,1,1,1,1,1,1,1,1],
+    [5,5,1,1,5,1,1,1,1,1],
+    [1,5,5,5,5,1,1,1,1,1],
+    [1,1,1,1,5,1,1,1,1,1]
+];
+// plot acts same but there is also slot id
 class Resource
 {
+    public static array $ore = ['', 'Crushed', 'Purified Crushed', 'Centrifuged'];
+    public static array $processed = ['', 'Small', 'Tiny'];
+    public static array $formed = ['Plate', 'Dense Plate', 'Wire', 'Item Casing', 'Gear', 'Ring', 'Rod'];
+
+    // Liquids: Water, Lava, Oil
+    // EU - Energy Units
+    public static array $generator = [
+        'Generator', // (coal / wood) => EU/t
+        'Geothermal Generator', // lava => EU/t
+        'Nuclear Reactor', 'Reactor Chamber', // uranium pods => EU/t
+        'Radioisotope Thermoelectric Generator', // Pellets of RTG Fuel => EU/t
+        'Semifluid Generator', // Oil => EU/t
+        'Solar Panel', // Sun => EU/t
+        'Water Mill', // Water => EU/t
+        'Wind Mill', // Height, Weather => EU/t
+    ];
+    public static array $processor = [
+        'Compressor', // 9 plates + 625 EU => Dense Plate
+        'Electric Furnace', // (Ore / Dust) + 390 EU => Ingot
+        'Extractor', // Resin + 313 EU => 3 Rubber
+        'Induction Furnace', // (Ore / Dust) + 6000 to 208 EU => Ingot
+        'Furnace', // (Ore / Dust) + (coal / wood) => Ingot
+        'Macerator', // Ore + 625 EU => Crushed Ore
+        'Mass Fabricator','Pattern Storage', 'Replicator', 'Scanner',
+        'Metal Former', // Ingot + 625 EU => Plates, Item Casings and Wires
+        'Ore Washing Plant', // Water + Crushed Ore + 330 EU => Purified Crushed Ore
+        'Recycler', // Any item + 360 EU => 12.5% Scrap
+        'Solar Distiller', // Sun + Water => Distilled Water
+        'Thermal Centrifuge', // Crushed Ore + (1500 * (mass / multiplier) EU) => Dust + Stone Dust + 1 of elements Small / Tiny dust
+                            // Purified Crushed Ore + (1500 * (mass / multiplier) EU) => Dust + 2 of elements Small / Tiny dust
+    ];
+    public static array $gatherer = [
+        'Miner','Advanced Miner', 'Pump', 'Advanced Pump'
+    ];
+    public static array $storage = [
+        'Chest','Tank'
+    ];
     public static function elements()
     {
         return collect(json_decode(file_get_contents(resource_path('data/PeriodicTable.json')))->elements);
@@ -19,16 +74,10 @@ class Resource
 
     public static function make()
     {
-        $ore = ['Crushed Ore', 'Purified Crushed Ore', 'Centrifuged Ore'];
-        $processed = ['Dust', 'Small Dust', 'Tiny Dust'];
-        $formed = ['Plate', 'Dense Plate', 'Wire', 'Item Casing', 'Gear', 'Ring', 'Rod'];
-
         $items = collect();
         // Fill up elements and their forms
         foreach (self::elements() as $element){
-            $item = new ElementItem();
-            $item->name = $element->name;
-            $item->description = $element->summary;
+            $item = new ElementItem($element->name, $element->summary);
             $item->color = $element->{"cpk-hex"};
             $item->symbol = $element->symbol;
             $item->melt = $element->melt;
@@ -38,17 +87,14 @@ class Resource
             $item->metal = Str::contains($element->category, [' metal', 'lanthanide', 'actinide']);
             $items->push($item);
             if($item->metal) {
-                foreach ($formed as $form){
-                    $item = new Item();
-                    $item->name = $element->name.' '.$form;
-                    $item->description = 'Metal '.$form. ' made of '.$element->name;
+                foreach (self::$formed as $form){
+                    $item = new Item($element->name.' '.$form, 'Metal '.$form. ' made of '.$element->name);
                     $items->push($item);
                 }
+
             }
-            foreach ($processed as $form){
-                $item = new Item();
-                $item->name = $element->name.' '.$form;
-                $item->description = $form. ' consisting of '.$element->name;
+            foreach (self::$processed as $form){
+                $item = new Item($form.' '.$element->name.' Dust', $form. ' Dust consisting of '.$element->name);
                 $items->push($item);
             }
         }
@@ -59,9 +105,7 @@ class Resource
                 or Str::contains($mineral->formula, 'g/mol')
                 or (float)Str::replace(['<sub>','</sub>'], '', $mineral->formula)
             ) continue;
-            $item = new MineralItem();
-            $item->name = $mineral->name;
-            $item->description = $mineral->formula;
+            $item = new MineralItem($mineral->name, $mineral->formula);
             $item->color = $mineral->color ?? null;
             $formula = $mineral->formula;
             // Need to break this formula to elements with percentage
@@ -117,20 +161,20 @@ class Resource
 
             // Count percentage
             $count = array_sum($elements);
-            $elements = array_map(function ($value) use ($count, $elements){
-                return round(100 * $value / $count, 1);
-            }, $elements);
-
             // Need to assign ElementItem instances
-            $final = collect();
-            foreach ($elements as $symbol => $percentage){
-                $final->push(['element'=>ElementItem::find($symbol), 'percentage' => $percentage]);
+            $elementItems = collect();
+            foreach ($elements as $symbol => $value){
+                $elementItems->push(['element'=>ElementItem::find($symbol), 'percentage' => round(100 * $value / $count, 1)]);
             }
             // Finally
-            $item->elements = $final;
-            $item->durability = 1;
+            $item->elements = $elements;
+            $item->elementItems = $elementItems;
+            $item->hardness = 1;
             $items->push($item);
-
+            foreach (self::$ore as $form){
+                $item = new Item($form.' '.$mineral->name.' Ore', $mineral->formula);
+                $items->push($item);
+            }
         }
 
         $items->map(fn($item, $i) => $item->id = $i + 1);
@@ -151,50 +195,9 @@ class Resource
 
     }
 }
-class Item
-{
-    public int $id;
-    public string $name;
-    public mixed $description;
-}
+
 // Need custom logic for them I think
-class MachineItem extends Item
-{
-    public string $type;
-    public array $slots;
-}
 // Base resource element for crafts
-class ElementItem extends Item
-{
-    public static function find($symbol)
-    {
-        return Resource::load()->firstWhere('symbol', $symbol);
-    }
-    public string $symbol;
-    public mixed $color;
-    public mixed $melt;
-    public mixed $boil;
-    public int $mass;
-    public bool $metal;
-    public bool $radioactive;
-}
 // Sum up all numbers and calc percentage of elements in mineral (ore).
-class MineralItem extends Item
-{
-    public float $durability;
-    public mixed $color;
-    public mixed $elements;
-}
 // Only for start with Mine
-class ToolItem extends Item
-{
-    public int $durability;
-    public int $effectiveness;
-}
 // Items can be done out of every Metal
-class Recipe
-{
-    public int $id;
-    public array $ingredients;
-    public Item $result;
-}
