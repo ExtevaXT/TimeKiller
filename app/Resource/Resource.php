@@ -2,12 +2,12 @@
 
 namespace App\Resource;
 
-use App\Resource\Items\Component;
-use App\Resource\Items\Element;
-use App\Resource\Items\Generator;
-use App\Resource\Items\Instance;
-use App\Resource\Items\Mineral;
-use App\Resource\Items\Processor;
+use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Component;
+use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Element;
+use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Generator;
+use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Instance;
+use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Mineral;
+use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Processor;
 use Illuminate\Support\Str;
 
 // Mine array
@@ -38,26 +38,26 @@ class Resource
     // EU - Energy Units
     // t - Tick, 1t - 1/20s
     const GENERATORS = [
-        ['name' => 'Generator', 'voltage'=> -10, 'capacity'=>4000, 'fuel'=>'coal', 'fuelConsumption' => 1/8], // (coal / wood) => EU/t
-        ['name' => 'Geothermal Generator', 'voltage'=> -20, 'capacity'=>480000, 'fuel'=>Liquid::LAVA, 'fuelConsumption' => 2],
-        ['name' => 'Radioisotope Thermoelectric Generator', 'consumption'=> -8, 'capacity'=>0, 'fuel'=>'Pellets of RTG Fuel', 'fuelConsumption' => 0],
-        ['name' => 'Semifluid Generator', 'voltage'=> -8, 'capacity'=>128000, 'fuel'=>Liquid::OIL, 'fuelConsumption' => 2],
-        ['name' => 'Solar Panel', 'voltage'=> -1, 'capacity'=>4000, 'fuel'=>null, 'fuelConsumption' => 0],
-        ['name' => 'Water Mill', 'voltage'=> -2, 'capacity'=>4000, 'fuel'=>Liquid::WATER, 'fuelConsumption' => 2],
-        ['name' => 'Wind Mill', 'voltage'=> -4, 'capacity'=>4000, 'fuel'=>null, 'fuelConsumption' => 0],
+        ['name' => 'Generator','production'=>10,'voltage'=> Voltage::LV, 'capacity'=>4000, 'fuel'=>'coal', 'fuelConsumption' => 1/8], // (coal / wood) => EU/t
+        ['name' => 'Geothermal Generator','production'=>20, 'voltage'=> Voltage::LV, 'capacity'=>480000, 'fuel'=>Liquid::LAVA, 'fuelConsumption' => 2],
+        ['name' => 'Radioisotope Thermoelectric Generator', 'production'=> 8,'voltage'=> Voltage::LV, 'capacity'=>0, 'fuel'=>'Pellets of RTG Fuel', 'fuelConsumption' => 0],
+        ['name' => 'Semifluid Generator', 'production'=> 8,'voltage'=> Voltage::LV, 'capacity'=>128000, 'fuel'=>Liquid::OIL, 'fuelConsumption' => 2],
+        ['name' => 'Solar Panel', 'production'=> 1,'voltage'=> Voltage::LV, 'capacity'=>0, 'fuel'=>null, 'fuelConsumption' => 0],
+        ['name' => 'Water Mill', 'production'=> 2,'voltage'=> Voltage::LV, 'capacity'=>2, 'fuel'=>Liquid::WATER, 'fuelConsumption' => 2],
+        ['name' => 'Wind Mill', 'production'=> 5,'voltage'=> Voltage::LV, 'capacity'=>0, 'fuel'=>null, 'fuelConsumption' => 0],
         //'Nuclear Reactor', 'Reactor Chamber', // uranium pods => EU/t
     ];
     const PROCESSORS = [
-        ['name' => 'Compressor', 'consumption'=> 625, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// 9 plates + 625 EU => Dense Plate
-        ['name' => 'Electric Furnace', 'consumption'=> 390, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// (Ore / Dust) + 390 EU => Ingot
-        ['name' => 'Extractor', 'consumption'=> 313, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Resin + 313 EU => 3 Rubber
-        ['name' => 'Induction Furnace', 'consumption'=> 6000, 'voltage'=>128, 'capacity'=>48000, 'input'=>null, 'output' => null],// (Ore / Dust) + 6000 to 208 EU => Ingot
-        ['name' => 'Macerator', 'consumption'=> 625, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ore + 625 EU => Crushed Ore
-        ['name' => 'Metal Former', 'consumption'=> 625, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ingot + 625 EU => Plates, Item Casings and Wires
-        ['name' => 'Ore Washing Plant', 'consumption'=> 330, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Water + Crushed Ore + 330 EU => Purified Crushed Ore
-        ['name' => 'Recycler', 'consumption'=> 360, 'voltage'=>32, 'capacity'=>4000, 'input'=>null, 'output' => null],// Any item + 360 EU => 12.5% Scrap
-        ['name' => 'Solar Distiller', 'consumption'=> 0, 'voltage'=>0, 'capacity'=>0, 'input'=>null, 'output' => null],// Sun + Water => Distilled Water
-        ['name' => 'Thermal Centrifuge', 'consumption'=> 24000 , 'voltage'=>32, 'capacity'=>48000, 'input'=>null, 'output' => null],// Crushed Ore + (24000 * (mass / multiplier) EU) => Dust + Stone Dust + 1 of elements Small / Tiny dust
+        ['name' => 'Compressor', 'consumption'=> 625, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// 9 plates + 625 EU => Dense Plate
+        ['name' => 'Electric Furnace', 'consumption'=> 390, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// (Ore / Dust) + 390 EU => Ingot
+        ['name' => 'Extractor', 'consumption'=> 313, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Resin + 313 EU => 3 Rubber
+        ['name' => 'Induction Furnace', 'consumption'=> 6000, 'voltage'=>Voltage::MV, 'capacity'=>48000, 'input'=>null, 'output' => null],// (Ore / Dust) + 6000 to 208 EU => Ingot
+        ['name' => 'Macerator', 'consumption'=> 625, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ore + 625 EU => Crushed Ore
+        ['name' => 'Metal Former', 'consumption'=> 625, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ingot + 625 EU => Plates, Item Casings and Wires
+        ['name' => 'Ore Washing Plant', 'consumption'=> 330, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Water + Crushed Ore + 330 EU => Purified Crushed Ore
+        ['name' => 'Recycler', 'consumption'=> 360, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Any item + 360 EU => 12.5% Scrap
+        ['name' => 'Solar Distiller', 'consumption'=> 0, 'voltage'=>Voltage::LV, 'capacity'=>0, 'input'=>null, 'output' => null],// Sun + Water => Distilled Water
+        ['name' => 'Thermal Centrifuge', 'consumption'=> 24000 , 'voltage'=>Voltage::MV, 'capacity'=>48000, 'input'=>null, 'output' => null],// Crushed Ore + (24000 * (mass / multiplier) EU) => Dust + Stone Dust + 1 of elements Small / Tiny dust
         // Purified Crushed Ore + (1500 * (mass / multiplier) EU) => Dust + 2 of elements Small / Tiny dust
 
 
@@ -73,7 +73,10 @@ class Resource
         'Chest','Tank'
     ];
     const ENERGY_STORAGES = [
-        'BatBox','CESU', 'MFE', 'MFSU'
+        ['name'=>'BatBox','capacity'=>40000, 'voltage'=>32],
+        ['name'=>'CESU','capacity'=>300000, 'voltage'=>128],
+        ['name'=>'MFE','capacity'=>4000000, 'voltage'=>512],
+        ['name'=>'MFSU','capacity'=>4000000, 'voltage'=>2048],
     ];
 
     public static function elements()

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Resource\Items\Mineral;
+use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Mineral;
 use App\Resource\Resource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;

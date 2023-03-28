@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Resource\Items;
+namespace App\Resource\Items\Instances;
 
+
+use App\Resource\Items\Instance;
 
 class Storage extends Instance
 {
