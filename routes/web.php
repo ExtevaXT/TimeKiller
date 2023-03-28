@@ -16,10 +16,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    dd(Resource::load()->get(1129));
+    dd(Resource::load()->whereInstanceOf(\App\Resource\Items\Instance::class)->take(30));
 });
 Route::get('/make', function () {
-    Resource::make();
-    Resource::make(true);
+    ini_set('max_execution_time', 500);
+    Resource::make(false, true);
+    //Resource::make(true, true);
+    dd(Resource::load()->count());
 });
 Route::get('/mine', [Controller::class, 'mine']);
+Route::get('/resource', function () {
+    return view('resources');
+});

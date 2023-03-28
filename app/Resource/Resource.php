@@ -2,12 +2,14 @@
 
 namespace App\Resource;
 
-use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Component;
-use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Element;
-use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Generator;
-use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Instance;
-use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Mineral;
-use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Processor;
+use App\Resource\Items\Component;
+use App\Resource\Items\Element;
+use App\Resource\Items\Instance;
+use App\Resource\Items\Instances\Storage;
+use App\Resource\Items\Mineral;
+use App\Resource\Items\Instances\Machines\Generator;
+use App\Resource\Items\Instances\Machines\Processor;
+use App\Resource\Items\Instances\Machines\EnergyStorage;
 use Illuminate\Support\Str;
 
 // Mine array
@@ -48,29 +50,31 @@ class Resource
         //'Nuclear Reactor', 'Reactor Chamber', // uranium pods => EU/t
     ];
     const PROCESSORS = [
-        ['name' => 'Compressor', 'consumption'=> 625, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// 9 plates + 625 EU => Dense Plate
-        ['name' => 'Electric Furnace', 'consumption'=> 390, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// (Ore / Dust) + 390 EU => Ingot
-        ['name' => 'Extractor', 'consumption'=> 313, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Resin + 313 EU => 3 Rubber
-        ['name' => 'Induction Furnace', 'consumption'=> 6000, 'voltage'=>Voltage::MV, 'capacity'=>48000, 'input'=>null, 'output' => null],// (Ore / Dust) + 6000 to 208 EU => Ingot
-        ['name' => 'Macerator', 'consumption'=> 625, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ore + 625 EU => Crushed Ore
-        ['name' => 'Metal Former', 'consumption'=> 625, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ingot + 625 EU => Plates, Item Casings and Wires
-        ['name' => 'Ore Washing Plant', 'consumption'=> 330, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Water + Crushed Ore + 330 EU => Purified Crushed Ore
-        ['name' => 'Recycler', 'consumption'=> 360, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Any item + 360 EU => 12.5% Scrap
-        ['name' => 'Solar Distiller', 'consumption'=> 0, 'voltage'=>Voltage::LV, 'capacity'=>0, 'input'=>null, 'output' => null],// Sun + Water => Distilled Water
-        ['name' => 'Thermal Centrifuge', 'consumption'=> 24000 , 'voltage'=>Voltage::MV, 'capacity'=>48000, 'input'=>null, 'output' => null],// Crushed Ore + (24000 * (mass / multiplier) EU) => Dust + Stone Dust + 1 of elements Small / Tiny dust
+        ['name' => 'Compressor','operation'=>800, 'operationLength'=>20, 'consumption'=> 2, 'voltage'=>Voltage::LV, 'capacity'=>800, 'input'=>null, 'output' => null],// 9 plates + 625 EU => Dense Plate
+        ['name' => 'Electric Furnace','operation'=>390, 'operationLength'=>6.5, 'consumption'=> 3, 'voltage'=>Voltage::LV, 'capacity'=>416, 'input'=>null, 'output' => null],// (Ore / Dust) + 390 EU => Ingot
+        ['name' => 'Extractor','operation'=>800, 'operationLength'=>20, 'consumption'=> 2, 'voltage'=>Voltage::LV, 'capacity'=>800, 'input'=>null, 'output' => null],// Resin + 313 EU => 3 Rubber
+        ['name' => 'Induction Furnace','operation'=>[6000,208], 'operationLength'=>[18.75,0.65], 'consumption'=> 16, 'voltage'=>Voltage::MV, 'capacity'=>1000, 'input'=>null, 'output' => null],// (Ore / Dust) + 6000 to 208 EU => Ingot
+        ['name' => 'Macerator','operation'=>600, 'operationLength'=>15, 'consumption'=> 2, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ore + 625 EU => Crushed Ore
+        ['name' => 'Metal Former','operation'=>2000, 'operationLength'=>10, 'consumption'=> 10, 'voltage'=>Voltage::LV, 'capacity'=>4000, 'input'=>null, 'output' => null],// Ingot + 625 EU => Plates, Item Casings and Wires
+        ['name' => 'Ore Washing Plant','operation'=>8000, 'operationLength'=>25, 'consumption'=> 16, 'voltage'=>Voltage::LV, 'capacity'=>16000, 'input'=>null, 'output' => null],// Water + Crushed Ore + 330 EU => Purified Crushed Ore
+        ['name' => 'Recycler','operation'=>45, 'operationLength'=>2.25, 'consumption'=> 1, 'voltage'=>Voltage::LV, 'capacity'=>45, 'input'=>null, 'output' => null],// Any item + 360 EU => 12.5% Scrap
+        //['name' => 'Solar Distiller','operation'=>800, 'operationLength'=>20, 'consumption'=> 2, 'voltage'=>Voltage::LV, 'capacity'=>0, 'input'=>null, 'output' => null],// Sun + Water => Distilled Water
+        ['name' => 'Thermal Centrifuge','operation'=>24000, 'operationLength'=>25, 'consumption'=> 48 , 'voltage'=>Voltage::MV, 'capacity'=>48000, 'input'=>null, 'output' => null],// Crushed Ore + (24000 * (mass / multiplier) EU) => Dust + Stone Dust + 1 of elements Small / Tiny dust
         // Purified Crushed Ore + (1500 * (mass / multiplier) EU) => Dust + 2 of elements Small / Tiny dust
-
 
 
         //'Furnace', // (Ore / Dust) + (coal / wood) => Ingot
         //'Mass Fabricator','Pattern Storage', 'Replicator', 'Scanner',
-
     ];
     const GATHERERS = [
-        'Miner','Advanced Miner', 'Pump', 'Advanced Pump'
+        ['name' => 'Miner','operation'=>1000, 'operationLength'=>30, 'consumption'=> 12 , 'voltage'=>Voltage::LV, 'capacity'=>1000, 'input'=>null, 'output' => null],
+        ['name' => 'Advanced Miner','operation'=>512, 'operationLength'=>1, 'consumption'=> 25.6 , 'voltage'=>Voltage::HV, 'capacity'=>4000000, 'input'=>null, 'output' => null],
+        ['name' => 'Pump','operation'=>1000, 'operationLength'=>1, 'consumption'=> 2 , 'voltage'=>Voltage::LV, 'capacity'=>200, 'input'=>null, 'output' => null],
+        ['name' => 'Advanced Pump','operation'=>512, 'operationLength'=>1, 'consumption'=> 25.6 , 'voltage'=>Voltage::HV, 'capacity'=>4000000, 'input'=>null, 'output' => null],
     ];
     const STORAGES = [
-        'Chest','Tank'
+        ['name' => 'Chest','capacity'=>32],
+        ['name' => 'Tank','capacity'=>32000],
     ];
     const ENERGY_STORAGES = [
         ['name'=>'BatBox','capacity'=>40000, 'voltage'=>32],
@@ -91,7 +95,7 @@ class Resource
     {
         return Resource::load()->firstWhere('id', $id);
     }
-    public static function make(bool $elementsFilled = false)
+    public static function make(bool $elementsFilled = false, $json = false)
     {
         $items = collect();
         // Fill up Elements
@@ -112,28 +116,55 @@ class Resource
                     $component->material = $item;
                     $items->push($component);
                 }
-                foreach (self::GENERATORS as $generator){
-                    $instance = new Generator($generator['name']);
-                    //$instance->sprite = 'generator.png';
-                    $instance->material = $item;
-                    $instance->capacity = $generator['capacity'];
-                    $instance->voltage = $generator['voltage'];
-                    $instance->fuel = $generator['fuel'];
-                    $instance->fuelConsumption = $generator['fuelConsumption'];
-                    $items->push($instance);
+                foreach (self::GENERATORS as $instance){
+                    $generator = new Generator($item->name.' '.$instance['name']);
+                    $generator->type = $instance;
+                    $generator->material = $item;
+                    $generator->production = $instance['production'];
+                    $generator->voltage = $instance['voltage'];
+                    $generator->capacity = $instance['capacity'];
+                    $generator->fuel = $instance['fuel'];
+                    $generator->fuelConsumption = $instance['fuelConsumption'];
+                    $items->push($generator);
                 }
-                foreach (self::PROCESSORS as $processor){
-                    $instance = new Processor($processor['name']);
-                    //$instance->sprite = 'processor.png';
-                    $instance->material = $item;
-                    $instance->capacity = $processor['capacity'];
-                    $instance->consumption = $processor['consumption'];
-                    $instance->voltage = $processor['voltage'];
-                    $instance->input = $processor['input'];
-                    $instance->output = $processor['output'];
-                    $items->push($instance);
+                foreach (self::PROCESSORS as $instance){
+                    $processor = new Processor($item->name.' '.$instance['name']);
+                    $processor->type = $instance;
+                    $processor->material = $item;
+                    $processor->operation = $instance['operation'];
+                    $processor->operationLength = $instance['operationLength'];
+                    $processor->capacity = $instance['capacity'];
+                    $processor->consumption = $instance['consumption'];
+                    $processor->voltage = $instance['voltage'];
+                    $items->push($processor);
                 }
+                foreach (self::GATHERERS as $instance){
+                    $processor = new Processor($item->name.' '.$instance['name']);
+                    $processor->type = $instance;
+                    $processor->material = $item;
+                    $processor->operation = $instance['operation'];
+                    $processor->operationLength = $instance['operationLength'];
+                    $processor->capacity = $instance['capacity'];
+                    $processor->consumption = $instance['consumption'];
+                    $processor->voltage = $instance['voltage'];
 
+                    $items->push($processor);
+                }
+                foreach (self::STORAGES as $instance){
+                    $storage = new Storage($item->name.' '.$instance['name']);
+                    $storage->type = $instance;
+                    $storage->material = $item;
+                    $storage->capacity = $instance['capacity'];
+                    $items->push($storage);
+                }
+                foreach (self::ENERGY_STORAGES as $instance){
+                    $storage = new EnergyStorage($item->name.' '.$instance['name']);
+                    $storage->type = $instance;
+                    $storage->material = $item;
+                    $storage->capacity = $instance['capacity'];
+                    $storage->voltage = $instance['voltage'];
+                    $items->push($storage);
+                }
             }
             foreach (self::PROCESSED as $form){
                 $component = new Component($form.' '.$element->name.' Dust', $form. ' Dust consisting of '.$element->name);
@@ -223,7 +254,7 @@ class Resource
             }
         }
         $items->map(fn($item, $i) => $item->id = $i + 1);
-        //file_put_contents(resource_path('data/items.json'), json_encode($items, JSON_PRETTY_PRINT));
+        if($json) file_put_contents(resource_path('data/items.json'), json_encode($items, JSON_PRETTY_PRINT));
         file_put_contents(resource_path('data/items'), serialize($items));
     }
     public static function flatten($array): array

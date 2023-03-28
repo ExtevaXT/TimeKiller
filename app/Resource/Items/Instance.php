@@ -6,8 +6,10 @@ use App\Resource\Item;
 
 class Instance extends Item
 {
-    public string $type;
+    public mixed $type;
     public array $slots;
     public string $sprite;
     public Element $material;
+
+    const WORKBENCH = 'Workbench';
 }

@@ -11,5 +11,4 @@ class Machine extends Instance
     public int $capacity;
     public array $upgrades;
     public int $voltage;
-    public int $operationLength;
 }
