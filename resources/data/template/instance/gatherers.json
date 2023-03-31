@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Miner",
+        "operation": 1000,
+        "operationLength": 30,
+        "consumption": 12,
+        "voltage": 32,
+        "capacity": 1000,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Advanced Miner",
+        "operation": 512,
+        "operationLength": 1,
+        "consumption": 25.6,
+        "voltage": 512,
+        "capacity": 4000000,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Pump",
+        "operation": 1000,
+        "operationLength": 1,
+        "consumption": 2,
+        "voltage": 32,
+        "capacity": 200,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Advanced Pump",
+        "operation": 512,
+        "operationLength": 1,
+        "consumption": 25.6,
+        "voltage": 512,
+        "capacity": 4000000,
+        "input": null,
+        "output": null
+    }
+]

@@ -1,0 +1,166 @@
+[
+    {
+        "ingredients": [
+            "Plate", "Plate", "Plate",
+            "Plate", null, "Plate",
+            "Plate", "Plate", "Plate"
+        ],
+        "result": "Basic Machine Casing"
+    },
+    {
+        "ingredients": [
+            "Plate", "Cutter"
+        ],
+        "shapeless": true,
+        "result": "Cable"
+    },
+    {
+        "ingredients": [
+            "Ingot","Forge Hammer"
+        ],
+        "shapeless": true,
+        "result": "Plate"
+    },
+    {
+        "ingredients": [
+            "Plate","Forge Hammer"
+        ],
+        "shapeless": true,
+        "result": "Item Casing"
+    },
+    {
+        "ingredients": [
+            "Cable", "Cable", "Cable",
+            "Cable", "Ingot", "Cable",
+            "Cable", "Cable", "Cable"
+        ],
+        "result": "Coil"
+    },
+    {
+        "ingredients": [
+            null, "Item Casing", null,
+            "Coil", "Ingot", "Coil",
+            null, "Item Casing", null
+        ],
+        "result": "Electric Motor"
+    },
+    {
+        "ingredients": [
+            "Cable", "Resin"
+        ],
+        "shapeless": true,
+        "result": "Insulated Cable"
+    },
+    {
+        "ingredients": [
+            "Small Dust", "Small Dust", "Small Dust",
+            "Small Dust", "Small Dust", "Small Dust",
+            "Small Dust", "Small Dust", "Small Dust"
+        ],
+        "result": "Dust"
+    },
+    {
+        "ingredients": [
+            null, "Insulated Cable", null,
+            "Item Casing", "Red Dust", "Item Casing",
+            "Item Casing", "Red Dust", "Item Casing"
+        ],
+        "result": "RE-Battery"
+    },
+    {
+        "ingredients": [
+            "Insulated Cable", "Insulated Cable", "Insulated Cable",
+            "Red Dust", "Plate", "Red Dust",
+            "Insulated Cable", "Insulated Cable", "Insulated Cable"
+        ],
+        "result": "Electronic Circuit"
+    },
+    {
+        "ingredients": [
+            "Silicate", "Silicate", "Silicate",
+            "Cobblestone", "Basic Machine Casing", "Cobblestone",
+            null, "Electronic Circuit", null
+        ],
+        "result": "Macerator"
+    },
+    {
+        "ingredients": [
+            "Cobblestone", "Cobblestone", "Cobblestone",
+            "Cobblestone", null, "Cobblestone",
+            "Cobblestone", "Cobblestone", "Cobblestone"
+        ],
+        "result": "Cobblestone Furnace"
+    },
+    {
+        "ingredients": [
+            "Plate", "Plate", "Plate",
+            "Plate", "Cobblestone Furnace", "Plate",
+            "Plate", "Plate", "Plate"
+        ],
+        "result": "Furnace"
+    },
+    {
+        "ingredients": [
+            null, "Electronic Circuit", null,
+            "Red dust", "Furnace", "Red dust",
+            null, null, null
+        ],
+        "result": "Electric Furnace"
+    },
+    {
+        "ingredients": [
+            "Stone", null, "Stone",
+            "Stone", "Basic Machine Casing", "Stone",
+            "Stone", "Electronic Circuit", "Stone"
+        ],
+        "result": "Compressor"
+    },
+    {
+        "ingredients": [
+            "Treetap", "Basic Machine Casing", "Treetap",
+            "Treetap", "Electronic Circuit", "Treetap",
+            null, null, null
+        ],
+        "result": "Extractor"
+    },
+    {
+        "ingredients": [
+            null, "Glow dust", null,
+            "Dirt", "Compressor", "Dirt",
+            "Ingot", "Dirt", "Ingot"
+        ],
+        "result": "Recycler"
+    },
+    {
+        "ingredients": [
+            null, "Electronic Circuit", null,
+            "Tool box", "Basic Machine Casing", "Tool box",
+            "Coil", "Coil", "Coil"
+        ],
+        "result": "Metal Former"
+    },
+    {
+        "ingredients": [
+            "Plate", "Plate", "Plate",
+            "Bucket", "Basic Machine Casing", "Bucket",
+            "Electric Motor", "Electronic Circuit", "Electric Motor"
+        ],
+        "result": "Ore Washing Plant"
+    },
+    {
+        "ingredients": [
+            "Coil", "Mining Laser", "Coil",
+            "Ingot", "Advanced Machine Casing", "Ingot",
+            "Ingot", "Electric Motor", "Ingot"
+        ],
+        "result": "Thermal Centrifuge"
+    },
+    {
+        "ingredients": [
+            "Ingot", "Ingot", "Ingot",
+            "Ingot", "Electric Furnace", "Ingot",
+            "Ingot", "Advanced Machine Casing", "Ingot"
+        ],
+        "result": "Induction Furnace"
+    }
+]

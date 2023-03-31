@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    dd(Resource::load()->whereInstanceOf(\App\Resource\Items\Instance::class)->take(30));
+    dd(Resource::load()->where('material','Lithium')->take(30));
 });
 Route::get('/make', function () {
     ini_set('max_execution_time', 500);
@@ -25,6 +25,12 @@ Route::get('/make', function () {
     dd(Resource::load()->count());
 });
 Route::get('/mine', [Controller::class, 'mine']);
+//Route::get('/mine', \App\Http\Livewire\Mine::class);
+Route::get('/craft', [Controller::class, 'craft']);
 Route::get('/resource', function () {
-    return view('resources');
+   return view('resources');
+});
+Route::get('/test', function () {
+    dd(json_decode(file_get_contents(resource_path('data/template/instance/generators.json')), true));
+    //dd(new \App\Resource\Items\Instances\Machines\Generator());
 });

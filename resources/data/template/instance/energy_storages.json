@@ -1,0 +1,22 @@
+[
+    {
+        "name": "BatBox",
+        "capacity": 40000,
+        "voltage": 32
+    },
+    {
+        "name": "CESU",
+        "capacity": 300000,
+        "voltage": 128
+    },
+    {
+        "name": "MFE",
+        "capacity": 4000000,
+        "voltage": 512
+    },
+    {
+        "name": "MFSU",
+        "capacity": 4000000,
+        "voltage": 2048
+    }
+]

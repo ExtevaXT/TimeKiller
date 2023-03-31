@@ -8,9 +8,8 @@ use App\Resource\Item;
 use App\Resource\Items\Instances\Machine;
 use App\Resource\Voltage;
 
-class Processor extends Machine
+class Gatherer extends Machine
 {
-
     public float $consumption;
     public mixed $operation;
     public mixed $operationLength;

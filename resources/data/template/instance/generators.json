@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Generator",
+        "production": 10,
+        "voltage": 32,
+        "capacity": 4000,
+        "fuel": "coal",
+        "fuelConsumption": 0.125
+    },
+    {
+        "name": "Geothermal Generator",
+        "production": 20,
+        "voltage": 32,
+        "capacity": 480000,
+        "fuel": "Lava",
+        "fuelConsumption": 2
+    },
+    {
+        "name": "Radioisotope Thermoelectric Generator",
+        "production": 8,
+        "voltage": 32,
+        "capacity": 0,
+        "fuel": "Pellets of RTG Fuel",
+        "fuelConsumption": 0
+    },
+    {
+        "name": "Semifluid Generator",
+        "production": 8,
+        "voltage": 32,
+        "capacity": 128000,
+        "fuel": "Oil",
+        "fuelConsumption": 2
+    },
+    {
+        "name": "Solar Panel",
+        "production": 1,
+        "voltage": 32,
+        "capacity": 0,
+        "fuel": null,
+        "fuelConsumption": 0
+    },
+    {
+        "name": "Water Mill",
+        "production": 2,
+        "voltage": 32,
+        "capacity": 2,
+        "fuel": "Water",
+        "fuelConsumption": 2
+    },
+    {
+        "name": "Wind Mill",
+        "production": 5,
+        "voltage": 32,
+        "capacity": 0,
+        "fuel": null,
+        "fuelConsumption": 0
+    }
+]

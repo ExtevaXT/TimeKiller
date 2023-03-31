@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(Instance::class)->constrained();
             $table->integer('slot');
             $table->integer('item');
+            $table->integer('amount');
             $table->dateTime('loaded');
             $table->timestamps();
         });

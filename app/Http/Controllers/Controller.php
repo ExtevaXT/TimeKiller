@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Mineral;
+use App\Resource\Items\Mineral;
 use App\Resource\Resource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -12,7 +12,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function index()
+    public function plot()
     {
 
     }
@@ -24,8 +24,9 @@ class Controller extends BaseController
     {
 
     }
-    public function mine()
+    public function mine($seed = null)
     {
+        if(!$seed) $seed = rand(1, 999999999);
         $ore_chance = 5;
         $vein_horizontal_chance = 30;
         $vein_vertical_chance = 50;
@@ -57,15 +58,7 @@ class Controller extends BaseController
                 }
             $mine->push($line);
         }
-
-        foreach ($mine as $line){
-            foreach ($line as $ore) {
-                echo $ore == null ? '□' : '<span title="'.$ore->name
-                    . '" style="color:'.substr(dechex(crc32($ore->name)), 0, 6) .
-                    ' ">■</span>';
-            }
-            echo '</br>';
-        }
+        return view('mine', ['mine'=>$mine, 'seed'=>$seed]);
         //dd($mine);
     }
 
@@ -81,6 +74,6 @@ class Controller extends BaseController
 
     public function craft()
     {
-
+        return view('craft');
     }
 }

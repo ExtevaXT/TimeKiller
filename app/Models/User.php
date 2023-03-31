@@ -3,9 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Resource\Items\Instances\Machines\Instances\Instances\Instances\Machine;
+use App\Resource\Items\Instances\Machine;
+use App\Resource\Items\Instances\Machines\Generator;
+use App\Resource\Items\Instances\Machines\Processor;
+use App\Resource\Items\Instances\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -14,27 +18,41 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public function Energy()
+    public function energy()
     {
         $energy = 0;
         //$this->instances()
         foreach ($this->instances as $instance){
-            if(($machine = $instance->item()) instanceof Machine){
-                 $energy += $machine->voltage; // * $instance->loaded
+            if(($machine = $instance->item()) instanceof Generator){
+                 $energy += $machine->production; // * $instance->loaded
             }
+            if(($machine = $instance->item()) instanceof Processor){
+                $energy -= $machine->consumption; // * $instance->loaded
+            }
+            // TODO Check energy storage
         }
         return $energy;
     }
-    public function EnergyVoltage()
+
+    public function capacity()
     {
-        $energy = 0;
-        //$this->instances()
+        $capacity = 0;
         foreach ($this->instances as $instance){
-            if(($machine = $instance->item()) instanceof Machine){
-                $energy += $machine->voltage;
+            if($instance->item() instanceof Storage and $instance->contain == 'Items') {
+                $capacity += $instance->item()->capacity;
             }
         }
-        return $energy;
+        return $capacity;
+    }
+    public function freeSlots()
+    {
+        $freeSlots = $this->capacity();
+        foreach ($this->instances as $instance){
+            if($instance->item() instanceof Storage and $instance->contain == 'Items') {
+                $freeSlots -= $instance->slots->count();
+            }
+        }
+        return $freeSlots;
     }
     public function instances(): HasMany
     {

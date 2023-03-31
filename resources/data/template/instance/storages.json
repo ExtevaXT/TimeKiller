@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Chest",
+        "contain": "Items",
+        "capacity": 32
+    },
+    {
+        "name": "Tank",
+        "contain": "Liquid",
+        "capacity": 32000
+    }
+]

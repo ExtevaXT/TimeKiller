@@ -1,0 +1,98 @@
+[
+    {
+        "name": "Compressor",
+        "operation": 800,
+        "operationLength": 20,
+        "consumption": 2,
+        "voltage": 32,
+        "capacity": 800,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Electric Furnace",
+        "operation": 390,
+        "operationLength": 6.5,
+        "consumption": 3,
+        "voltage": 32,
+        "capacity": 416,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Extractor",
+        "operation": 800,
+        "operationLength": 20,
+        "consumption": 2,
+        "voltage": 32,
+        "capacity": 800,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Induction Furnace",
+        "operation": [
+            6000,
+            208
+        ],
+        "operationLength": [
+            18.75,
+            0.65
+        ],
+        "consumption": 16,
+        "voltage": 128,
+        "capacity": 1000,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Macerator",
+        "operation": 600,
+        "operationLength": 15,
+        "consumption": 2,
+        "voltage": 32,
+        "capacity": 4000,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Metal Former",
+        "operation": 2000,
+        "operationLength": 10,
+        "consumption": 10,
+        "voltage": 32,
+        "capacity": 4000,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Ore Washing Plant",
+        "operation": 8000,
+        "operationLength": 25,
+        "consumption": 16,
+        "voltage": 32,
+        "capacity": 16000,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Recycler",
+        "operation": 45,
+        "operationLength": 2.25,
+        "consumption": 1,
+        "voltage": 32,
+        "capacity": 45,
+        "input": null,
+        "output": null
+    },
+    {
+        "name": "Thermal Centrifuge",
+        "operation": 24000,
+        "operationLength": 25,
+        "consumption": 48,
+        "voltage": 128,
+        "capacity": 48000,
+        "input": null,
+        "output": null
+    }
+]
