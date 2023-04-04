@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\Resource\Resource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,8 +17,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    dd(Resource::load()->where('material','Lithium')->take(30));
+    dd(Auth::user()->freeSlots());
+    //dd(Resource::load()->whereInstanceOf(\App\Resource\Items\Instances\Storage::class)->take(30));
 });
+Route::get('/login', function (\Illuminate\Http\Request $request) {
+    if(Auth::attempt(['name'=>1,'password'=>1])){
+        $request->session()->regenerate();
+        return 'ok';
+    }
+    return 'not ok';
+});
+Route::get('/add', function (\Illuminate\Http\Request $request) {
+    Auth::user()->addItem(rand(0, 5000));
+});
+
+Route::get('/instance', [Controller::class, 'instance']);
+
+Route::get('/plot', [Controller::class, 'plot']);
+Route::get('/build', [Controller::class, 'build']);
 Route::get('/make', function () {
     ini_set('max_execution_time', 500);
     Resource::make(false, true);

@@ -7,6 +7,7 @@ use App\Resource\Items\Instances\Machine;
 use App\Resource\Items\Instances\Machines\Generator;
 use App\Resource\Items\Instances\Machines\Processor;
 use App\Resource\Items\Instances\Storage;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -38,7 +39,7 @@ class User extends Authenticatable
     {
         $capacity = 0;
         foreach ($this->instances as $instance){
-            if($instance->item() instanceof Storage and $instance->contain == 'Items') {
+            if($instance->item() instanceof Storage and $instance->item()->contain == 'Items') {
                 $capacity += $instance->item()->capacity;
             }
         }
@@ -48,11 +49,33 @@ class User extends Authenticatable
     {
         $freeSlots = $this->capacity();
         foreach ($this->instances as $instance){
-            if($instance->item() instanceof Storage and $instance->contain == 'Items') {
+            if($instance->item() instanceof Storage and $instance->item()->contain == 'Items') {
                 $freeSlots -= $instance->slots->count();
             }
         }
         return $freeSlots;
+    }
+    public function items(){
+        $instances = $this->instances->filter(fn ($instance) => $instance->item() instanceof Storage);
+        //TODO merge $instances?
+        return $instances;
+    }
+    public function storages(){
+        return $this->instances->filter(fn ($instance) => $instance->item() instanceof Storage);
+    }
+    public function addItem($id, $amount = 1)
+    {
+        if ($this->freeSlots() > 0) {
+            $instance = $this->instances->filter(
+                fn ($instance) => $instance->item() instanceof Storage && $instance->availableSlot())
+                ->first();
+            $instance->slots()->create([
+                'slot'=>$instance->availableSlot(),
+                'item'=>$id,
+                'amount' =>$amount,
+                'loaded'=>Carbon::now()
+            ]);
+        }
     }
     public function instances(): HasMany
     {

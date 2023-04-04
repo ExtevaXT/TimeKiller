@@ -2,8 +2,11 @@
     <div style="display: grid; gap: 1px; grid-template-columns: repeat(3,1fr)">
         @for($i = 0; $i<9; $i++)
             <select wire:model="{{$slots[$i]}}">
-                <option value="1">Iron</option>
-                <option value="2">Copper</option>
+                @foreach(auth()->user()->storages() as $storage)
+                    @foreach($storage->slots as $slot)
+                    <option value="{{$slot->id}}">{{$slot->item()->name}}</option>
+                    @endforeach
+                @endforeach
             </select>
         @endfor
     </div>

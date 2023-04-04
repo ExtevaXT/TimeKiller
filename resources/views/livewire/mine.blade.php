@@ -1,12 +1,12 @@
 <div class="mine">
     @foreach($mine as $line)
-        <div class="line" style="display: flex">
+        <div class="d-flex line">
             @foreach($line as $ore)
-                <div class="ore" style="width: 32px; height: 32px; margin: 1px">
+                <div class="uk-height-small uk-width-small ore m-1">
                     @if($ore == null)
-                        <div title="Stone" style="background: darkgrey; width: 100%; height: 100%" wire:click="collect('{{ 'Stone' }}')"></div>
+                        <div title="Stone" class="w-100 h-100 uk-background-muted" wire:click="collect('{{ 'Stone' }}')"></div>
                     @else
-                        <div title="{{$ore->name}}" style="background-color: {{substr(dechex(crc32($ore->name)), 0, 6)}}; width: 100%; height: 100%" wire:click="collect('{{ $ore->name }}')"></div>
+                        <div title="{{$ore->name}}" class="w-100 h-100" style="background-color: {{substr(dechex(crc32($ore->name)), 0, 6)}}" wire:click="collect('{{ $ore->id }}')"></div>
                     @endif
                 </div>
 

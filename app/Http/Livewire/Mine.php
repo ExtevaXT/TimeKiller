@@ -2,15 +2,16 @@
 
 namespace App\Http\Livewire;
 
+use App\Resource\Resource;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Mine extends Component
 {
     public mixed $mine;
-    public function collect($item)
+    public function collect($id)
     {
-         dd($item);
+         dd(Resource::find($id));
 
     }
     public function render()
