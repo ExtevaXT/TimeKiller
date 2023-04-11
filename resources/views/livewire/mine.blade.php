@@ -6,7 +6,7 @@
                     @if($ore == null)
                         <div title="Stone" class="w-100 h-100 uk-background-muted" wire:click="collect('{{ 'Stone' }}')"></div>
                     @else
-                        <div title="{{$ore->name}}" class="w-100 h-100" style="background-color: {{substr(dechex(crc32($ore->name)), 0, 6)}}" wire:click="collect('{{ $ore->id }}')"></div>
+                        <div onclick="this.style.display = 'none'" title="{{((object)$ore)->name}}" class="w-100 h-100" style="background-color: {{substr(dechex(crc32(((object)$ore)->name)), 0, 6)}}" wire:click="collect('{{ ((object)$ore)->id }}')"></div>
                     @endif
                 </div>
 

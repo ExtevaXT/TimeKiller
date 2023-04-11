@@ -69,12 +69,15 @@ class User extends Authenticatable
             $instance = $this->instances->filter(
                 fn ($instance) => $instance->item() instanceof Storage && $instance->availableSlot())
                 ->first();
-            $instance->slots()->create([
-                'slot'=>$instance->availableSlot(),
-                'item'=>$id,
-                'amount' =>$amount,
-                'loaded'=>Carbon::now()
-            ]);
+            //if($slot = $instance->availableForStackSlot($id))
+            //    $slot->update(['amount'=>$slot->amount++]);
+            //else
+                $instance->slots()->create([
+                    'slot'=>$instance->availableSlot(),
+                    'item'=>$id,
+                    'amount' =>$amount,
+                    'loaded'=>Carbon::now()
+                ]);
         }
     }
     public function instances(): HasMany

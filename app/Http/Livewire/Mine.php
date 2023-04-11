@@ -9,10 +9,10 @@ use Livewire\Component;
 class Mine extends Component
 {
     public mixed $mine;
+
     public function collect($id)
     {
-         dd(Resource::find($id));
-
+        Auth::user()->addItem($id);
     }
     public function render()
     {

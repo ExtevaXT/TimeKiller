@@ -17,5 +17,5 @@ class Item
     public mixed $type;
     public string $name;
     public mixed $description;
-    public int $maxStack;
+    public int $maxStack = 64;
 }

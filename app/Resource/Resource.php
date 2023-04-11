@@ -17,6 +17,7 @@ class Resource
 {
     const TPS = 20;
     const ORE = ['Ore', 'Crushed Ore', 'Purified Crushed Ore'];
+
     public static function load()
     {
         return unserialize(file_get_contents(resource_path('data/items')));
@@ -100,7 +101,7 @@ class Resource
     }
     public static function recipes()
     {
-        return collect(json_decode(file_get_contents(resource_path('data/recipes.json'))));
+        return collect(json_decode(file_get_contents(resource_path('data/template/recipes.json'))));
     }
     public static function loadInstances($filename, $class, $element, $items) {
         $data = json_decode(file_get_contents(resource_path($filename)), true);

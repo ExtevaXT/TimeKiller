@@ -31,4 +31,12 @@ class Instance extends Model
         }
         return null;
     }
+    public function availableForStackSlot($id)
+    {
+        $item = Resource::find($id);
+        foreach ($this->slots as $slot)
+            if($item and $slot->item = $item->id and $slot->amount < $item->maxStack)
+                return $slot;
+        return false;
+    }
 }
